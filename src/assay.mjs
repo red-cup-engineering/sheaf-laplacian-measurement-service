@@ -55,3 +55,48 @@ export function assayFiniteSheafLaplacian(input) {
 }
 /** Fail closed before x402 verification, charge or supplier invocation. */
 export { admitFiniteCellularSheaf } from "./assay-input.mjs";
+
+/** Native x402 Autosell's ONE source-owned operation contract. Its package
+ * declaration supplies only commerce terms; input/output come from here. */
+const idSchema = { type: "string", pattern: "^[A-Za-z][A-Za-z0-9_.:-]{0,63}$" };
+const exactValue = { oneOf: [
+  { type: "integer" }, { type: "string", pattern: "^(?:0|-?[1-9][0-9]{0,63})(?:/[1-9][0-9]{0,63})?$" },
+] };
+const rationalMatrix = { type: "array", items: { type: "array", items: exactValue } };
+const inputSchema = {
+  type: "object", additionalProperties: false, required: ["vertices", "edges"],
+  properties: {
+    vertices: { type: "array", maxItems: 16, items: { type: "object", additionalProperties: false,
+      required: ["id", "dim"], properties: { id: idSchema, dim: { type: "integer", minimum: 1, maximum: 4 } } } },
+    edges: { type: "array", maxItems: 32, items: { type: "object", additionalProperties: false,
+      required: ["id", "from", "to", "dim", "restrict"], properties: {
+        id: idSchema, from: idSchema, to: idSchema, dim: { type: "integer", minimum: 1, maximum: 4 },
+        restrict: { type: "object", additionalProperties: false, required: ["from", "to"],
+          properties: { from: rationalMatrix, to: rationalMatrix } },
+      } } },
+    observations: { type: "array", maxItems: 48, items: { type: "object", additionalProperties: false,
+      required: ["vertex", "coordinate", "value", "sourceRecord"], properties: {
+        vertex: idSchema, coordinate: { type: "integer", minimum: 0 }, value: exactValue,
+        sourceRecord: { type: "string", minLength: 1, maxLength: 1024 },
+      } } },
+    state: { type: "array", maxItems: 48, items: { type: "number" } },
+    metrics: { type: "array", maxItems: 32, items: { type: "array", items: { type: "array", items: { type: "number" } } } },
+  },
+};
+const cohomologySchema = { type: "object", required: ["h0", "h1", "rankD0"],
+  properties: { h0: { type: "integer", minimum: 0 }, h1: { type: "integer", minimum: 0 }, rankD0: { type: "integer", minimum: 0 } } };
+const exactOutputSchema = { type: "object", required: ["recordType", "cohomology", "qualification", "dimensions", "coefficientField"],
+  properties: { recordType: { const: "561-group.finite-cellular-sheaf-assay.v1" }, cohomology: cohomologySchema,
+    qualification: { type: "string" }, coefficientField: { const: "Q" }, dimensions: { type: "object" } } };
+const laplacianOutputSchema = { type: "object", required: ["recordType", "cohomology", "qualification", "numerical"],
+  properties: { recordType: { const: "561-group.finite-sheaf-laplacian-assay.v1" }, cohomology: cohomologySchema,
+    qualification: { type: "string" }, numerical: { type: "object", required: ["qualification", "operator", "matrix"],
+      properties: { qualification: { type: "string" }, operator: { type: "string" }, matrix: { type: "object" } } } } };
+export const catalog = Object.freeze({ operations: Object.freeze({
+  "finite-sheaf-cohomology": Object.freeze({ name: "finite-sheaf-cohomology",
+    description: "Exact rational H0/H1 and source-indexed extension/obstruction for a bounded finite one-dimensional cellular sheaf. Not kernel-certified Lean proof.",
+    inputSchema, outputSchema: exactOutputSchema, operation: assayFiniteCellularSheaf }),
+  "finite-sheaf-laplacian": Object.freeze({ name: "finite-sheaf-laplacian",
+    description: "IEEE-754 sheaf Laplacian and optional Dirichlet energy with separately exact rational H0/H1. Numerical results are not proof certificates.",
+    inputSchema, outputSchema: laplacianOutputSchema, operation: assayFiniteSheafLaplacian }),
+}) });
