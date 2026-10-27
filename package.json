@@ -9,7 +9,9 @@
     "url": "git+https://github.com/red-cup-engineering/sheaf-laplacian-measurement-service.git"
   },
   "exports": {
-    ".": "./src/measure.mjs"
+    ".": "./src/measure.mjs",
+    "./exact-graph-admission": "./src/exact-graph-admission.mjs",
+    "./exact-graph-cohomology": "./src/exact-graph-cohomology.mjs"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs"
