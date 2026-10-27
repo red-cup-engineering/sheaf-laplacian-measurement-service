@@ -1,0 +1,28 @@
+name: Finite sheaf mathematics and Autosell source
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "test/**"
+      - "package.json"
+      - ".github/workflows/assay.yml"
+  push:
+    branches:
+      - "feat/source-qualified-finite-sheaf-calculation-20261027"
+permissions:
+  contents: read
+jobs:
+  assay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Prepayment admission - dependency free
+        run: npm run test:admission
+      - name: Install original versioned SignGraph math engine
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Syntax and full native mathematical boundary
+        run: npm run check && npm test
