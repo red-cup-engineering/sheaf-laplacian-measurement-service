@@ -24,7 +24,15 @@ function rational(value, label) {
   if (typeof value === "number" && Number.isSafeInteger(value) && !Object.is(value, -0)) return value;
   if (typeof value !== "string" || !RATIONAL.test(value))
     throw new TypeError(label + ": exact integer or bounded rational string required");
-  return value;
+  // Equivalent source fractions must not turn into different serialized math inputs.
+  // The original SignGraph engine retains ownership of exact rank and cohomology;
+  // this boundary only normalizes a bounded, already-admitted rational carrier.
+  if (!value.includes("/")) return value;
+  const [numerator, denominator] = value.split("/").map(BigInt);
+  let a = numerator < 0n ? -numerator : numerator, b = denominator;
+  while (b !== 0n) [a, b] = [b, a % b];
+  const n = numerator / a, d = denominator / a;
+  return d === 1n ? String(n) : String(n) + "/" + String(d);
 }
 function matrix(value, rows, cols, label) {
   if (!Array.isArray(value) || value.length !== rows || value.some(row => !Array.isArray(row) || row.length !== cols))
