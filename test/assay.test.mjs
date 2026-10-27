@@ -51,3 +51,16 @@ test("non-SPD edge metric refuses spectral report", () => {
     ...triangle(1), metrics: [[[-1]],[[-1]],[[-1]]],
   }));
 });
+
+test("paid JSON boundaries serialize exact obstruction and numerical receipts without hidden BigInt", () => {
+  const input = { ...triangle(1), observations: [
+    { vertex: "a", coordinate: 0, value: "1/3", sourceRecord: "record:one" },
+    { vertex: "b", coordinate: 0, value: "2/3", sourceRecord: "record:two" },
+  ] };
+  const exact = assayFiniteCellularSheaf(input);
+  assert.equal(exact.extension.status, "mathematically-obstructed");
+  assert.doesNotThrow(() => JSON.stringify(exact));
+  const numeric = assayFiniteSheafLaplacian({ ...input, state: [1, 2, 3] });
+  assert.doesNotThrow(() => JSON.stringify(numeric));
+  assert.equal(JSON.parse(JSON.stringify(numeric)).cohomology.h0, 1);
+});
