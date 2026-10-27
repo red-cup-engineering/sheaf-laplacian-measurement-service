@@ -1,21 +1,25 @@
 {
   "name": "@red-cup-engineering/sheaf-laplacian-measurement-service",
-  "version": "0.1.2",
+  "version": "0.2.0-dev.0",
   "private": false,
   "type": "module",
-  "description": "Measures graph-Laplacian smooth and residual components and section disagreement energy for any bounded risk field.",
+  "description": "Source-qualified finite rational cellular-sheaf cohomology/obstruction receipts and explicitly approximate sheaf Laplacians.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/red-cup-engineering/sheaf-laplacian-measurement-service.git"
   },
   "exports": {
-    ".": "./src/measure.mjs"
+    ".": "./src/measure.mjs",
+    "./assay": "./src/assay.mjs",
+    "./assay-input": "./src/assay-input.mjs"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check src/measure.mjs && node --check src/assay-input.mjs && node --check src/assay.mjs",
+    "test:admission": "node --test test/assay-input.test.mjs"
   },
   "dependencies": {
-    "@red-cup-engineering/signgraph": "0.1.0"
+    "@red-cup-engineering/signgraph": "0.7.1-dev.4"
   },
   "files": [
     "package.json",
