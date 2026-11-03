@@ -48,7 +48,7 @@ market.561.group is preserved during transition until genuine buyer
 payments, payee, recovery and settlement have been reconciled. Related Work:
 [Shop #26](https://github.com/red-cup-engineering/shop.561.group/issues/26),
 [Shop #27](https://github.com/red-cup-engineering/shop.561.group/issues/27),
-[Bazaar PR #4](https://github.com/red-cup-engineering/bazaar.561.group/pull/4).
+[Bazaar PR #4](https://github.com/causeway-services/bazaar.561.group/pull/4).
 
 A signed triangle with three negative restrictions is a useful independent
 negative control: the exact H0 and H1 both vanish, even though the corresponding
