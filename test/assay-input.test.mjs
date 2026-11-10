@@ -48,3 +48,18 @@ test("coordinate/observation budgets refuse before invoking the math engine", ()
     { observations: Array.from({ length: 48 }, (_, i) => ({ vertex: "a", coordinate: 0, value: 1, sourceRecord: "s" + i })) },
   ]) assert.throws(() => admitFiniteCellularSheaf({ ...example(), ...bad }));
 });
+
+test("equivalent exact rational source readings normalize before calculation and never mutate the caller", () => {
+  const request = example();
+  request.edges[0].restrict.from = [["14/21"]];
+  request.observations[0].value = "-6/4";
+  const first = admitFiniteCellularSheaf(request);
+  const second = admitFiniteCellularSheaf(request);
+  assert.equal(first.edges[0].restrict.from[0][0], "2/3");
+  assert.equal(first.observations[0].value, "-3/2");
+  assert.equal(request.edges[0].restrict.from[0][0], "14/21");
+  assert.equal(request.observations[0].value, "-6/4");
+  assert.deepEqual(first, second);
+  request.edges[0].restrict.from = [["0/99"]];
+  assert.equal(admitFiniteCellularSheaf(request).edges[0].restrict.from[0][0], "0");
+});
